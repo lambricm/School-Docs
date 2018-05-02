@@ -1,0 +1,254 @@
+/*****
+	Assignment 3 - Zebra Puzzle
+		<names removed>
+*****/
+
+%rules for query
+
+((house X)
+	(member (Red _ _ English _) X)%englishman lives in red
+	(member (_ _ _ Spanish Dog) X)%spaniard has dog
+	(eq X ((_ _ _ Norwegian _) _ _ _ _))%norwegian lives on first house on left
+	(right (Green _ _ _ _) (Ivory _ _ _ _) X)%The green house is right of ivory house.
+	(next (_ Hersheys _ _ _) (_ _ _ _ Fox) X)%hershey eater is next to fox owner
+	(member (Yellow KitKats _ _ _) X)%yellow house has people who eats kitkats
+	(next (_ _ _ Norwegian _) (Blue _ _ _ _) X)%norweigian next to blue house
+	(member (_ Smarties _ _ Snails) X)%The Smarties eater owns snails.
+	(member (_ Snickers OrangeJuice _ _) X)%The Snickers eater drinks orange juice.
+	(member (_ _ Tea Ukrainian _) X)%The Ukrainian drinks tea
+	(member (_ MilkyWays _ Japanese _) X)%The Japanese eats Milky-Ways.
+	(next (_ KitKats _ _ _) (_ _ _ _ Horse) X)%Kit-Kats eaten in house next to horse 
+	(member (Green _ Coffee _ _) X)%Coffee is drunk in the green house
+	(eq X (_ _ (_ _ Milk _ _) _ _))%Milk is drunk in the middle house
+	)
+
+%determine if member of the collection of houses
+((member M (M _ _ _ _) ))
+((member M (_ M _ _ _) ))
+((member M (_ _ M _ _) ))
+((member M (_ _ _ M _) ))
+((member M (_ _ _ _ M) ))
+
+%determine if A is to the right of B
+((right A B (_ _ _ B A)))
+((right A B (_ _ B A _)))
+((right A B (_ B A _ _)))
+((right A B (B A _ _ _)))
+
+%determine if A and B are adjacent
+((next A B N)(right A B N))
+((next A B N)(right B A N))
+
+%determine if value is in the list
+((is-in-list H (H|_)))
+((is-in-list E ( _| T ))                              
+      (is-in-list E T))
+
+%constants for specifying values user wants to use
+((color))
+((nationality))
+((candy))
+((pet))
+((drink))
+%((houseNum))
+((all))
+
+%gets solutions
+((solutions X)(house X))
+
+%?((solutions X)(p)(pp X))%outputs the solution
+
+%finds solution
+%A = list constraints (in (color nationality candy pet drink) format
+%N = house number, either specify or leave as _
+%B = list of what we want to know about the return value 
+%	(color, nationality, candy, pet, drink, houseNum, all)
+%X = total set
+((findSolution A N B X)
+	(solutions X)
+	(check-mem A N X)
+	(eq A (H I J K L))
+	(pp "possible solutions:")
+	(if (is-in-list (all) B)
+		((pp-color H)
+		(pp-candy I)
+		(pp-drink J)
+		(pp-nationality K)
+		(pp-pet L)
+		(pp " "))
+		((if (is-in-list (color) B) ((pp-color H)) ())
+		(if (is-in-list (candy) B) ((pp-candy I)) ())
+		(if (is-in-list (drink) B) ((pp-drink J)) ())
+		(if (is-in-list (nationality) B) ((pp-nationality K)) ())
+		(if (is-in-list (pet) B) ((pp-pet L)) ())))
+	(fail))
+
+((findSolution A N B X)
+	(pp "there are no more possible solutions"))
+	
+%printing functions for printing values and wild cards alike	
+
+((pp-color A)
+	(con A)
+	(p "lives in the" A "house")
+	(pp " "))
+	
+((pp-color A)
+	(neg (con A))
+	(pp "lives in an unknown color house"))
+	
+((pp-candy A)
+	(con A)
+	(p "eats the candy" A)
+	(pp " "))
+	
+((pp-candy A)
+	(neg (con A))
+	(pp "eats an unknown candy"))
+	
+((pp-drink A)
+	(con A)
+	(p "drinks" A)
+	(pp " "))
+
+((pp-drink A)
+	(neg (con A))
+	(pp "drinks an unknown drink"))
+
+((pp-nationality A)
+	(con A)
+	(p "is" A)
+	(pp " "))
+
+((pp-nationality A)
+	(neg (con A))
+	(pp "is an unknown nationality"))
+	
+((pp-pet A)
+	(con A)
+	(p "owns the" A)
+	(pp " "))
+	
+((pp-pet A)
+	(neg (con A))
+	(pp "has an unknown pet"))
+
+%checks if the inputs are satisfied by the puzzle
+	
+((check-mem (A B C D E) N X)
+	(neg (num N))
+	(member (A B C D E) X))
+	
+((check-mem L N X)
+	(neg (num N))
+	(eq X (H1 H2 H3 H4 H5))
+	(eq L H1)
+	(fset N 1))
+	
+((check-mem (A B C D E) N X)
+	(num N)
+	(eq X (F G H I J))
+	(eq N 1)
+	(eq (A B C D E) F))
+	
+((check-mem (A B C D E) N X)
+	(num N)
+	(eq X (F G H I J))
+	(eq N 2)
+	(eq (A B C D E) G))
+	
+((check-mem (A B C D E) N X)
+	(num N)
+	(eq X (F G H I J))
+	(eq N 3)
+	(eq (A B C D E) H))
+	
+((check-mem (A B C D E) N X)
+	(num N)
+	(eq X (F G H I J))
+	(eq N 4)
+	(eq (A B C D E) I))
+	
+((check-mem (A B C D E) N X)
+	(num N)
+	(eq X (F G H I J))
+	(eq N 5)
+	(eq (A B C D E) J))
+	
+	/*
+Example runs:
+(wildcards interpreted as allowed to be any value) for example we don’t know what the norwegian drinks so if you query for a drink even if its like milk which the englishman drinks we say the norwegian might drink it also. So there is a definite englishman who drinks milk and maybe the Norwegian as well. We have no way to know and we decided to code it that way.
+
+Format of Query:
+	?((findSolution (house-color candy drink nationality pet) h X)
+	Where house number = h  and  1 <= h <= 5 and h counts from left to right on the street
+
+Total solution:
+Fril >?((solutions X)(pp X))
+((Yellow KitKats _48 Norwegian Fox) (Blue Hersheys Tea Ukrainian Horse) (Red Smarties Milk English Snails) (Ivory Snickers OrangeJuice Spanish Dog) (Green MilkyWays Coffee Japanese _51))
+
+Sample runs:
+
+Fril >?((findSolution (_ _ _ _ dog) _ ((all)) X))
+possible solutions:
+lives in the Green house
+eats the candy MilkyWays
+drinks Coffee
+is Japanese
+owns the dog
+lives in an unknown house number
+
+there are no more possible solutions
+
+
+Fril >?((findSolution (Red _ _ _ _) _ ((all)) X))
+possible solutions:
+lives in the Red house
+eats the candy Smarties
+drinks Milk
+is English
+owns the Snails
+
+there are no more possible solutions
+
+
+Fril >?((findSolution (_ _ _ _ Fox) _ ((all)) X))
+possible solutions:
+lives in the Yellow house
+eats the candy KitKats
+drinks an unknown drink
+is Norwegian
+owns the Fox
+
+possible solutions:
+lives in the Green house
+eats the candy MilkyWays
+drinks Coffee
+is Japanese
+owns the Fox
+
+there are no more possible solutions
+
+Fril >?((findSolution (_ _ _ _ Fox) _ ((color)) X))
+possible solutions:
+lives in the Yellow house
+possible solutions:
+lives in the Green house
+there are no more possible solutions
+
+Fril >?((findSolution (_ _ Wine _ _) _ ((nationality)) X))
+possible solutions:
+is Norwegian
+there are no more possible solutions
+
+Fril >?((findSolution (_ _ _ _ _) 3 ((all)) X))
+possible solutions:
+lives in the Red house
+eats the candy Smarties
+drinks Milk
+is English
+owns the Snails
+
+there are no more possible solutions
+
+*/

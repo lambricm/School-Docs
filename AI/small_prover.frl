@@ -1,0 +1,42 @@
+((roi UnitResolution  cnf ((A or B) (~ B))  A)) 
+((roi UnitResolution  cnf ((A or B) (~ A))  B)) 
+
+% or, in implicative form: 
+
+((roi UnitResolution  inf  ( ( (~ A) imp B) (~ B))  A)) 
+
+((roi AndElimination _ ((A ^ | T)) A)) 
+((roi AndElimination _ ((A ^ | T )) B)(member B T)) 
+
+((roi AndIntroduction _ () ())) 
+((roi AndIntroduction _  (A | T) ( A ^ | T1) ) 
+     (negg member_op OP T) 
+     (roi AndIntroduction _ T T1)) 
+
+((operators (and or imp ~))) 
+((member_op L)(operators OPS )(member OP OPS)) 
+
+% De Morgan's Rules (some of the clauses): 
+((deMorgan () ())) 
+
+((deMorgan ((~ (A and B and | T) )) ((~ A) or (~ B) or T1))
+	(deMorgan (~ T) T1)(!)) 
+
+((deMorgan ((~ (A or B or | T) )) ((~ A) and (~ B) and T1))
+	(deMorgan (~ T) T1)(!)) 
+((deMorgan ((~ (A and B or | T) )) ((~ A) or (~ B) and T1))
+	(deMorgan (~ T) T1)(!))
+
+((deMorgan ((~ (A or B and | T) )) ((~ A) and (~ B) or T1))
+	(deMorgan (~ T) T1)(!)) 
+((deMorgan (~ (A)) (~ A)))
+
+%You need to define a predicate small_prover 
+
+% ((small_prover  TYPE PREMISES CONCLUSION STEPS))....
+
+%((small_prover TYPE PREMISES CONCLUSION STEPS)
+%	)
+	
+((small_prover TYPE PREMIS RULE STEP)
+	(RULE TYPE PREMIS STEP))

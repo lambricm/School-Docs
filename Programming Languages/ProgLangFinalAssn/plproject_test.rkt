@@ -1,0 +1,177 @@
+;;PROJECT TESTS
+
+;; CS 4003: Programming Languages, Team Project
+;; Team Members:
+;;   names removed
+;; Option # 1
+
+#lang racket
+
+(require "plproject.rkt")
+
+; a test case that uses parts 1, 2, and 4
+; should produce (list (int 10) (int 11) (int 16))
+(define (test1)
+  (mupllist->racketlist
+   (eval-exp (call (call mupl-mapAddN (int 7))
+                   (racketlist->mupllist 
+                    (list (int 3) (int 4) (int 9)))))))
+
+;;Part 1 Tests
+
+(define (mupllist->racketlist_test1) 
+  (equal? (mupllist->racketlist (apair (var "hello") (apair(int 3) (apair(int 20) (aunit)))))
+          (list (var "hello") (int 3) (int 20))))
+
+(define (racketlist->mupllist_test1)
+  (equal?  (apair (var "hello") (apair(int 3) (apair(int 20) (aunit))))
+        (racketlist->mupllist (list (var "hello") (int 3) (int 20)))))
+
+(define (racketlist->mupllist->racketlist_test1)
+  (equal? (list (var "hello") (int 3) (int 20))
+        (mupllist->racketlist (racketlist->mupllist (list (var "hello") (int 3) (int 20))))))
+
+(define (mupllist->racketlist->mupllist_test1)
+  (equal? (apair (var "hello") (apair(int 3) (apair (int 20) (aunit))))
+         (racketlist->mupllist (mupllist->racketlist (apair (var "hello") (apair(int 3) (apair (int 20) (aunit))))))))
+
+;;Part 2 Tests
+
+(define (addition_test1)
+  (equal? (eval-exp (int 8))
+          (eval-exp (add (int 1) (int 7)))))
+
+(define (addition_test2)
+  (equal? (eval-exp (int 0))
+          (eval-exp (add (int 0) (int 0)))))
+
+(define (addition_test3)
+  (equal? (eval-exp (int 100))
+          (eval-exp (add (int 92) (int 8)))))
+
+(define (ifgreater_test1)
+ (equal? (eval-exp (int 42))
+         (eval-exp (ifgreater (int 2) (int 1) (int 42) (int 25)))))
+
+(define (ifgreater_test2)
+  (equal? (eval-exp (int 25))
+          (eval-exp (ifgreater (int 1) (int 2) (int 42) (int 25)))))
+
+(define (ifgreater_test3)
+  (equal? (eval-exp (int 25))
+          (eval-exp (ifgreater (int 1) (int 1) (int 42) (int 25)))))
+
+(define (fun_test1)
+  (equal? (eval-exp(fun #f "in" (add (int 1) (var "in"))))
+          (closure (list) (fun #f "in" (add (int 1) (var "in"))))))
+
+(define (fun_test2)
+  (equal? (eval-exp(fun "dobedobe" "f" (var "f")))
+          (closure (list) (fun "dobedobe" "f" (var "f")))))
+
+(define (fun_test3)
+  (equal? (eval-exp(fun "d" #f (int 3)))
+          (closure (list) (fun "d" #f (int 3)))))
+
+(define (apair_test1)
+  (equal? (eval-exp (apair (add (int 3) (int 4))
+                           (ifgreater (int 2) (int 1) (int 42) (int 25))))
+          (eval-exp (apair (int 7) (int 42)))))
+
+(define (fst_test1)
+  (equal? (eval-exp (int 3))
+          (eval-exp (fst (apair (int 3) (int 10))))))
+
+(define (fst_test2)
+  (equal? (eval-exp (int 10))
+          (eval-exp (fst (apair (add (int 6) (int 4)) (int 15))))))
+
+(define (fst_test3)
+  (equal? (eval-exp(aunit))
+          (eval-exp(fst (apair (aunit) (int 3))))))
+
+(define (snd_test1)
+  (equal? (eval-exp (int 3))
+          (eval-exp (snd (apair (int 10) (int 3))))))
+
+(define (snd_test2)
+  (equal? (eval-exp (int 10))
+          (eval-exp (snd (apair (int 15) (add (int 6) (int 4)))))))
+
+(define (snd_test3)
+  (equal? (eval-exp(aunit))
+          (eval-exp(snd (apair (int 3) (aunit))))))
+
+(define (isaunit_test1)
+  (equal? (eval-exp (int 1))
+          (eval-exp (isaunit (aunit)))))
+
+(define (isaunit_test2)
+  (equal? (eval-exp (int 0))
+          (eval-exp (isaunit (int 3)))))
+
+(define (isaunit_test3)
+  (equal? (eval-exp (int 0))
+          (eval-exp (isaunit (int 5)))))
+
+;; Part 3 Tests
+
+(define (ifaunit_test1)
+  (equal? (eval-exp (int 3))
+          (eval-exp (ifaunit (eval-exp (aunit)) (eval-exp (int 3)) (eval-exp (int 5))))))
+
+(define (ifaunit_test2)
+  (equal? (eval-exp (int 3))
+          (eval-exp (ifaunit (eval-exp (int 5)) (eval-exp (int 5)) (eval-exp (int 3))))))
+
+(define (ifaunit_test3)
+  (equal? (eval-exp (int 20))
+          (eval-exp (ifaunit (eval-exp (aunit)) (eval-exp (add (int 3) (int 17))) (eval-exp (int 3))))))
+
+(define (ifeq_test1)
+ (equal? (eval-exp (int 42))
+         (ifeq (int 1) (int 1) (int 42) (int 25))))
+
+(define (ifeq_test2)
+  (equal? (eval-exp (int 25))
+          (ifeq (int 1) (int 2) (int 42) (int 25))))
+
+(define (ifeq_test3)
+  (equal? (eval-exp (int 25))
+          (ifeq (int 2) (int 1) (int 42) (int 25))))
+
+;;Test Runs
+
+((lambda () (racketlist->mupllist_test1)));
+((lambda () (mupllist->racketlist_test1)));
+((lambda () (racketlist->mupllist->racketlist_test1)));
+((lambda () (mupllist->racketlist->mupllist_test1)));
+
+((lambda () (addition_test1)));
+((lambda () (addition_test2)));
+((lambda () (addition_test3)));
+((lambda () (ifgreater_test1)));
+((lambda () (ifgreater_test2)));
+((lambda () (ifgreater_test3)));
+((lambda () (fun_test1)));
+((lambda () (fun_test2)));
+((lambda () (fun_test3)));
+((lambda () (apair_test1)));
+((lambda () (fst_test1)));
+((lambda () (fst_test2)));
+((lambda () (fst_test3)));
+((lambda () (snd_test1)));
+((lambda () (snd_test2)));
+((lambda () (snd_test3)));
+
+((lambda () (isaunit_test1)));
+((lambda () (isaunit_test2)));
+((lambda () (isaunit_test3)));
+((lambda () (ifaunit_test1)));
+((lambda () (ifaunit_test2)));
+((lambda () (ifaunit_test3)));
+((lambda () (ifeq_test1)));
+((lambda () (ifeq_test2)));
+((lambda () (ifeq_test3)));
+
+((lambda () (test1)));
