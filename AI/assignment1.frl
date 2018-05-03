@@ -1,0 +1,65 @@
+/*
+	Class: Artificial Intelligence
+	Assignment Number: 1
+	Group Members:
+		names removed
+*/
+
+/* ((female X)) holds when X is a female */
+((female Mary  ))
+((female Sandra ))
+((female Juliet ))
+((female Lisa ))
+
+/* ((male X)) holds when X is a male */ 
+ ((male Peter ))
+ ((male Paul ))
+ ((male Dick ))
+ ((male Bob ))
+ ((male Harry ))
+ 
+/* ((parent P C)) holds when P is C’s parent*/
+ ((parent Bob  Lisa ))
+ ((parent Bob  Paul ))
+ ((parent Bob  Mary  ))
+ ((parent Juliet  Lisa ))
+ ((parent Juliet  Paul ))
+ ((parent Juliet  Mary ))
+ ((parent Peter  Harry ))
+ ((parent Lisa  Harry ))
+ ((parent Mary   Dick ))
+ ((parent Mary   Sandra ))
+ 
+ /* ((father F C)) holds when F is C's father */
+ ((father F C)
+	(male F)
+	(parent F C))
+	
+ /* ((brother X Y)) holds when X and Y have a common parent, X is a male and, X and Y are not the same */
+ ((brother X Y)
+	(parent P X)
+	(parent P Y)
+	(male X) 
+	(negg eq X Y))
+
+	
+ /* ((sister S X)) holds when S is X's sister */
+ ((sister S X)
+	(female S)
+	(parent P S)
+	(parent P X)
+	(negg eq S X))
+	
+ /* ((grandmother G X)) holds when G is X's grandmother /*
+ ((grandmother G X)
+	(female G)
+	(parent P X)
+	(parent G P))
+	
+ /* ((cousin C X)) holds when C is X's cousin */
+ ((cousin C X)
+	(parent P1 C)
+	(parent P2 X)
+	(or (brother P1 P2) (sister P1 P2))
+	(negg eq C X)
+	(negg eq P1 P2))
