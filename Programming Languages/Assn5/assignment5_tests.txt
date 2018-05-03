@@ -1,0 +1,26 @@
+#lang racket
+(provide (all-defined-out))
+(require racklog)
+; Names Removed
+; Programming Languages - Assignment 5 - Tests
+
+(%which () (%male 'Phil))
+(%which () (%female 'Beth))
+(%which () (%parent 'Pete 'Kate))
+(%which () (%spouse 'Diana 'Pete))
+(%which () (%wife 'Diana 'Pete))
+(%which () (%husband 'Pete 'Diana))
+(%which () (%sibling 'Neil 'Autumn))
+(%which () (%brother 'Neil 'Autumn))
+(%which () (%sister 'Autumn 'Neil))
+(%which () (%father 'Edward 'Neil))
+(%which () (%mother 'Kate 'Neil))
+(%which () (%son 'Neil 'Kate))
+(%which () (%daughter 'Autumn 'Kate))
+(%which () (%cousin 'Aidy 'Nate))
+(%which () (%grandparent 'Edward 'Nate))
+(%which () (%greatgrandparent 'Beth 'Nate))
+(%which () (%inlaw 'Beth 'Kate))
+(%which () (%inlaw 'Edward 'Laura))
+(%which () (%niece 'Aidy 'Autumn))
+(%which () (%nephew 'Nate 'Autumn))

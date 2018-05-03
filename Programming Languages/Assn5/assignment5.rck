@@ -1,0 +1,221 @@
+#lang racket
+(provide (all-defined-out))
+(require racklog)
+; Names Removed
+
+(define %male
+  (%rel ()
+    [('Phil)]
+    [('Pete)]
+    [('Edward)]
+    [('Jim)]
+    [('Ralph)]
+    [('Neil)]
+    [('Jordan)]
+    [('Nate)]
+    [('Tim)]
+    [('Aaron)]))
+
+(define %female
+  (%rel ()
+    [('Beth)]
+    [('Diana)]
+    [('Kate)]
+    [('Amy)]
+    [('Sarah)]
+    [('Autumn)]
+    [('Laura)]
+    [('Maria)]
+    [('Aidy)]
+    [('Leslie)]
+    [('Sasha)]))
+
+(define %parent
+  (%rel ()
+    [('Phil 'Edward)]
+    [('Beth 'Edward)]
+    [('Pete 'Kate)]
+    [('Diana 'Kate)]
+    [('Edward 'Ralph)]
+    [('Edward 'Autumn)]
+    [('Edward 'Neil)]
+    [('Kate 'Ralph)]
+    [('Kate 'Autumn)]
+    [('Kate 'Neil)]
+    [('Jim 'Laura)]
+    [('Jim 'Jordan)]
+    [('Amy 'Laura)]
+    [('Amy 'Jordan)]
+    [('Sarah 'Nate)]
+    [('Ralph 'Nate)]
+    [('Neil 'Aidy)]
+    [('Neil 'Tim)]
+    [('Neil 'Leslie)]
+    [('Laura 'Aidy)]
+    [('Laura 'Tim)]
+    [('Laura 'Leslie)]
+    [('Jordan 'Aaron)]
+    [('Jordan 'Sasha)]
+    [('Maria 'Aaron)]
+    [('Maria 'Sasha)]))
+
+(define %spouse
+  (%rel ()
+    [('Phil 'Beth)]
+    [('Beth 'Phil)]
+    [('Pete 'Diana)]
+    [('Diana 'Pete)]
+    [('Edward 'Kate)]
+    [('Kate 'Edward)]
+    [('Jim 'Amy)]
+    [('Amy 'Jim)]
+    [('Sarah 'Ralph)]
+    [('Ralph 'Sarah)]
+    [('Neil 'Laura)]
+    [('Laura 'Neil)]
+    [('Jordan 'Maria)]
+    [('Maria 'Jordan)]))
+
+(define %husband
+  (%rel (husbandperson otherperson)
+    [(husbandperson otherperson)
+      (%spouse husbandperson otherperson)
+      (%male husbandperson)]))
+
+(define %wife
+  (%rel (wifeperson otherperson)
+    [(wifeperson otherperson)
+      (%spouse wifeperson otherperson)
+      (%female wifeperson)]))
+
+(define %sibling
+  (%rel (sibling1 sibling2)
+        [(sibling1 sibling2)
+         (%let (parentperson)
+               (%and
+                (%parent parentperson sibling1)
+                (%parent parentperson sibling2)))]))
+
+(define %brother
+  (%rel (brotherperson otherperson)
+    [(brotherperson otherperson)
+      (%sibling brotherperson otherperson)
+      (%male brotherperson)]))
+
+(define %sister
+  (%rel (sisterperson otherperson)
+    [(sisterperson otherperson)
+      (%sibling sisterperson otherperson)
+      (%female sisterperson)]))
+
+(define %father
+  (%rel (fatherperson childperson)
+    [(fatherperson childperson)
+      (%parent fatherperson childperson)
+      (%male fatherperson)]))
+
+(define %mother
+  (%rel (motherperson childperson)
+    [(motherperson childperson)
+      (%parent motherperson childperson)
+      (%female motherperson)]))
+
+(define %son
+  (%rel (sonperson parentperson)
+    [(sonperson parentperson)
+      (%parent parentperson sonperson)
+      (%male sonperson)]))
+
+(define %daughter
+  (%rel (daughterperson parentperson)
+    [(daughterperson parentperson)
+      (%parent parentperson daughterperson)
+      (%female daughterperson)]))
+
+(define %cousin
+  (%rel (person1 person2)
+    [(person1 person2)
+      (%let (parent1 parent2)
+            (%and
+             (%parent parent1 person1)
+             (%parent parent2 person2)
+             (%sibling parent1 parent2)))]))
+
+(define %grandparent
+  (%rel (grandparentperson person)
+    [(grandparentperson person)
+      (%let (parentperson)
+            (%and
+             (%parent grandparentperson parentperson)
+             (%parent parentperson person)))]))
+
+(define %greatgrandparent
+  (%rel (greatgrandparentperson person)
+    [(greatgrandparentperson person)
+      (%let (grandparentperson)
+            (%and
+             (%parent greatgrandparentperson grandparentperson)
+             (%grandparent grandparentperson person)))]))
+
+(define %inlaw
+  (%rel (inlawperson person)
+    [(inlawperson person)
+      (%let (personspouse personchild)
+            (%and
+             (%spouse person personspouse)
+              (%parent person personchild)
+              (%/= personspouse inlawperson)
+              (%/= personchild inlawperson)
+             (%or
+              (%parent inlawperson personspouse)
+              (%grandparent inlawperson personspouse)
+              (%greatgrandparent inlawperson personspouse)
+              (%sibling inlawperson personspouse)
+              (%spouse personchild inlawperson))))]))
+
+(define %niece
+  (%rel (nieceperson person)
+    [(nieceperson person)
+      (%let (siblingperson spouseperson spousepersonsibling)
+            (%or
+             (%and
+              (%sibling siblingperson person)
+              (%daughter nieceperson siblingperson))
+             (%and
+              (%spouse spouseperson person)
+              (%sibling spousepersonsibling spouseperson)
+              (%daughter nieceperson spousepersonsibling))))]))
+
+(define %nephew
+  (%rel (nephewperson person)
+    [(nephewperson person)
+      (%let (siblingperson spouseperson spousepersonsibling)
+            (%or
+             (%and
+              (%sibling siblingperson person)
+              (%son nephewperson siblingperson))
+             (%and
+              (%spouse spouseperson person)
+              (%sibling spousepersonsibling spouseperson)
+              (%son nephewperson spousepersonsibling))))]))
+
+(%which () (%male 'Phil))
+(%which () (%female 'Beth))
+(%which () (%parent 'Pete 'Kate))
+(%which () (%spouse 'Diana 'Pete))
+(%which () (%wife 'Diana 'Pete))
+(%which () (%husband 'Pete 'Diana))
+(%which () (%sibling 'Neil 'Autumn))
+(%which () (%brother 'Neil 'Autumn))
+(%which () (%sister 'Autumn 'Neil))
+(%which () (%father 'Edward 'Neil))
+(%which () (%mother 'Kate 'Neil))
+(%which () (%son 'Neil 'Kate))
+(%which () (%daughter 'Autumn 'Kate))
+(%which () (%cousin 'Aidy 'Nate))
+(%which () (%grandparent 'Edward 'Nate))
+(%which () (%greatgrandparent 'Beth 'Nate))
+(%which () (%inlaw 'Beth 'Kate))
+(%which () (%inlaw 'Edward 'Laura))
+(%which () (%niece 'Aidy 'Autumn))
+(%which () (%nephew 'Nate 'Autumn))
