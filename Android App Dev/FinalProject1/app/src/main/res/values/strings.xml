@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">FinalProject1</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="txtLabel">Label</string>
+    <string name="txtTagMe">Tag Me</string>
+    <string name="txtTagName">Tag Name</string>
+    <string name="txtShowMe">Show me the way!</string>
+    <string name="txtDelDesc">Delete a tagged location:</string>
+    <string name="txtDeleteTag">Delete Tag</string>
+    <string name="title_activity_show_me">ShowMeActivity</string>
+    <string name="dirNeeded">Direction you need to go:</string>
+    <string name="distance">Distance:</string>
+    <string name="lblNA">N/A</string>
+</resources>
